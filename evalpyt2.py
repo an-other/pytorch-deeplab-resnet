@@ -34,7 +34,7 @@ Options:
 """
 
 args = docopt(docstr, version='v0.1')
-print args
+print(args)
 
 max_label = int(args['--NoLabels'])-1 # labels from 0,1, ... 20(for VOC) 
 def fast_hist(a, b, n):
@@ -43,7 +43,7 @@ def fast_hist(a, b, n):
 
 def get_iou(pred,gt):
     if pred.shape!= gt.shape:
-        print 'pred shape',pred.shape, 'gt shape', gt.shape
+        print('pred shape',pred.shape, 'gt shape', gt.shape)
     assert(pred.shape == gt.shape)    
     gt = gt.astype(np.float32)
     pred = pred.astype(np.float32)
@@ -74,15 +74,16 @@ im_path = args['--testIMpath']
 model = deeplab_resnet.Res_Deeplab(int(args['--NoLabels']))
 model.eval()
 counter = 0
-model.cuda(gpu0)
+#model.cuda(gpu0)
 snapPrefix = args['--snapPrefix'] 
 gt_path = args['--testGTpath']
 img_list = open('data/list/val.txt').readlines()
 
 for iter in range(1,21):   #TODO set the (different iteration)models that you want to evaluate on. Models are saved during training after each 1000 iters by default.
-    saved_state_dict = torch.load(os.path.join('data/snapshots/',snapPrefix+str(iter)+'000.pth'))
+    #saved_state_dict = torch.load(os.path.join('data/snapshots/',snapPrefix+str(iter)+'000.pth'))
+    saved_state_dict = torch.load('/content/drive/MyDrive/VOC12_scenes_16000.pth')
     if counter==0:
-	print snapPrefix
+	    print(snapPrefix)
     counter+=1
     model.load_state_dict(saved_state_dict)
 
@@ -120,4 +121,4 @@ for iter in range(1,21):   #TODO set the (different iteration)models that you wa
         pytorch_list.append(iou_pytorch)
         hist += fast_hist(gt.flatten(),output.flatten(),max_label+1)
     miou = np.diag(hist) / (hist.sum(1) + hist.sum(0) - np.diag(hist))
-    print 'pytorch',iter,"Mean iou = ",np.sum(miou)/len(miou)
+    print('pytorch',iter,"Mean iou = ",np.sum(miou)/len(miou))
