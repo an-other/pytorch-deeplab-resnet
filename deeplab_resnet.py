@@ -187,10 +187,11 @@ class MS_Deeplab(nn.Module):
       self.Scale = ResNet(block,[3, 4, 23, 3],NoLabels)   #changed to fix #4 
 
     def forward(self,x):
+        print(x.shape)
         input_size = x.size()[2]
         self.interp1 = nn.UpsamplingBilinear2d(size = (  int(input_size*0.75)+1,  int(input_size*0.75)+1  ))
         self.interp2 = nn.UpsamplingBilinear2d(size = (  int(input_size*0.5)+1,   int(input_size*0.5)+1   ))
-        self.interp3 = nn.UpsamplingBilinear2d(size = (  outS(input_size),   outS(input_size)   ))
+        self.interp3 = nn.UpsamplingBilinear2d(size = (  int(outS(input_size)),   int(outS(input_size))   ))
         out = []
         x2 = self.interp1(x)
         x3 = self.interp2(x)
